@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from scipy.optimize import curve_fit
 
-filename = 'C:/Users/98415/Data_Analysis/example.txt'
+#filename = 'C:/Users/98415/Data_Analysis/example.txt'
+filename = 'U:/Data_git/Data_Analysis/Experiments/example.txt'
 [length,time] = np.loadtxt(filename, delimiter=',',unpack=True)
 print(length) 
 print(time)
