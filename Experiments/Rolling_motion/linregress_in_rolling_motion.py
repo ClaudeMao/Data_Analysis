@@ -5,9 +5,10 @@ from scipy.stats import linregress
 filelist = ['U:/Data_git/Data_Analysis/Experiments/Rolling_motion/2-1.txt',\
 'U:/Data_git/Data_Analysis/Experiments/Rolling_motion/2-2.txt',\
 'U:/Data_git/Data_Analysis/Experiments/Rolling_motion/2-3.txt']
-    
-filename = filelist[0]
-[LHS, RHS] = np.loadtxt(filename, delimiter=',', unpack = True) # LHS = mgh-mv^2/2, RHS = (Vx/R)^2/2
+
+num = int(input('Which one (choose from 1,2,3)?:'))
+filename = filelist[num-1]
+[LHS, RHS] = np.loadtxt(filename, delimiter=',', unpack = True) # LHS = h, RHS = Vx^2
 
 y = LHS  
 x = RHS
@@ -25,16 +26,24 @@ print(slope, std_err, intercept, r_value**2)
 print('g = {} +- {} m/s^2'.format(slope, std_err))
 '''
 
-a = int(RHS[-1])+1
+a = RHS[-1]
 xfit = np.linspace(0, a, 100)
 yfit = slope*xfit + intercept
 plt.plot(xfit, yfit, 'r-', label= 'Linear Fit')
 plt.errorbar(x,y,fmt='o',label='Data', xerr=0, yerr=0) 
 plt.grid()
-plt.ylabel('mgh-mv^2/2[kg*m^2/s^2]')
-plt.xlabel('(Vx/R)^2/2[1/s^2]')
+plt.ylabel('h[m]')
+plt.xlabel('Vx^2[m^2/s^2]')
 plt.legend(loc='best')
 print('Slope, Error, Intercept, Correlation Coefficient:')
 print(slope, std_err, intercept, r_value**2)
-print('standard I in 2-1:{} , 2-2:{} , 2-3:{}'.format(0.001550846,0.000586376,0.003133555))
+if num == 1:
+    print('standard I in 2-1:{}'.format(0.001550846))
+    print('I in exp:{}'.format(2*0.051**2*(1.1925*9.8*slope-1.1925/2)))
+elif num == 2:
+    print('standard I in 2-2:{}'.format(0.000586376))
+    print('I in exp:{}'.format(2*0.0335**2*(1.045*9.8*slope-1.045/2)))
+elif num == 3:
+    print('standard I in 2-3:{}'.format(0.003133555))
+    print('I in exp:{}'.format(2*0.051**2*(2.4095*9.8*slope-2.4095/2)))
 plt.show()
