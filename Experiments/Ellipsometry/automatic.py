@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import os, sys
+import os, sys, math
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from scipy.stats import chisquare
@@ -24,8 +24,10 @@ def main():
    
         x_name = df.columns[0]
         y_name = df.columns[1]
+        errorbar = df.columns[2]
         x_values = list(df[x_name].values)
         y_values = list(df[y_name].values)
+        y_errorbar = list(df[errorbar].values)
         slope_1, intercept_1, r_value_1, p_value_1, std_err_1 = linregress(x_values[0:breaking_point], y_values[0:breaking_point])
         slope_2, intercept_2, r_value_2, p_value_2, std_err_2 = linregress(x_values[breaking_point:-1], y_values[breaking_point:-1])
         #Fit x and y Data using a linear regression
@@ -46,43 +48,67 @@ def main():
         we don't want error on x axis
         to make vertical line longer, we need to set parameter 'capsize' with appropriate value
         '''
+        
+        
+        #calculate intersection and plot it on graph
         intersection_x = (intercept_2 - intercept_1)/(slope_1 - slope_2)
         intersection_y = (slope_1 * intersection_x + intercept_1)
         inters_y_mdf = intersection_y * 0.996
         plt.plot(intersection_x, intersection_y, 'bo', label = 'Intersection')
         plt.text(intersection_x, inters_y_mdf, '(' + str(round(intersection_x,2)) + ',' + str(round(intersection_y,2)) + ')')
         
+        
+        #input unit of axis
         Unit_x = input('Please input unit of X axis(e.g.[m]):')
         Unit_y = input('Please input unit of Y axis(e.g.[m]):')
-        print('-----------------------------------\n')
-        print('Slope_1, Error_1, Intercept_1, Correlation Coefficient_1:') 
-        # r^2 = coefficient of determination
+        
+        
+        #print out result of each line
+        print('-----------------------------------')
+        print('Slope_1, Error_1, Intercept_1, Correlation Coefficient_1:') # r^2 = coefficient of determination
         print(slope_1, std_err_1, intercept_1, r_value_1**2)
         
+        
+        #calculate std_err_on_y of line 1
+        def power_1(a):
+            return a**slope_1 + intercept_1
+        y_fit_values_1 = list(map(power_1,x_values[0:breaking_point])) #this is a list which only contain several fitted points
+        y_y_fit_one = [y_values[0:breaking_point][i]-y_fit_values_1[i] for i in range(len(y_fit_values_1))] #Put 'y - y_fit' of line 1 into list
+        summa_one = [i**2 for i in y_y_fit_one]
+        total_one = 0
+        for i in range(len(summa_one)):
+            total_one += summa_one[i]
+        std_err_on_y_1 = math.sqrt(total_one / (len(y_fit_values_1) - 2))
+        
+        
+        #calculate chi-squared of line 1
         chi_squ_1 = 0
         for i in range(breaking_point):
-            chi_squ_1 += ((y_values[i] - yfit_1[i])/std_err_1)**2
-            print(chi_squ_1)
-        print('chi square test:')
-        print(chi_squ_1)
-        print('chi square test:')
-        def power(a):
-            return a**slope_1+intercept_1
-        
-        y_fit_values = list(map(power,x_values[0:breaking_point]))
-        s = chisquare(y_values[0:breaking_point], y_fit_values)
-        print(s)
-        print(y_values[0:breaking_point], y_fit_values)
+            chi_squ_1 += ((y_values[0:breaking_point][i] - y_fit_values_1[i])/std_err_on_y_1)**2
+        print('chi square test: {}'.format(round(chi_squ_1,2)))# two digits
         
         
-        print('-----------------------------------\n')
+        #calculate std_err_on_y of line 2
+        def power_2(a):
+            return a**slope_2 + intercept_2
+        y_fit_values_2 = list(map(power_2,x_values[breaking_point:-1]))
+        y_y_fit_two = [y_values[breaking_point:-1][i]-y_fit_values_2[i] for i in range(len(y_fit_values_2))] #Put 'y-y_fit' of line 2 into list
+        summa_two = [i**2 for i in y_y_fit_two]
+        total_two = 0
+        for i in range(len(summa_two)):
+            total_two += summa_two[i]
+        std_err_on_y_2 = math.sqrt(total_two / (len(y_fit_values_2) - 2))
+
+        print('-----------------------------------')
         print('Slope_2, Error_2, Intercept_2, Correlation Coefficient_2:')
         print(slope_2, std_err_2, intercept_2, r_value_2**2)
+        
+        
+        #calculate chi-squared of line 2
         chi_squ_2 = 0
-        for i in df.index[breaking_point-1 : -1]:
-            chi_squ_2 += ((y_values[i] - yfit_2[i])/std_err_2)**2
-        print('chi square test:')
-        print(chi_squ_2)
+        for i in range(len(y_fit_values_2)):
+            chi_squ_2 += ((y_values[breaking_point:-1][i] - y_fit_values_2[i])/std_err_on_y_2)**2
+        print('chi square test: {}'.format(round(chi_squ_2,2))) # two digits
         print('-----------------------------------')
         
         plt.grid()
