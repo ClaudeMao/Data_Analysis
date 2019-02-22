@@ -3,9 +3,11 @@ import pandas as pd
 import os, sys
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
+from scipy.stats import chisquare
 
 #this module could be used for two columns
 #splitting into two linear regression is supported
+
 
 def main():
     current_path_of_py = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -56,9 +58,31 @@ def main():
         print('Slope_1, Error_1, Intercept_1, Correlation Coefficient_1:') 
         # r^2 = coefficient of determination
         print(slope_1, std_err_1, intercept_1, r_value_1**2)
+        
+        chi_squ_1 = 0
+        for i in range(breaking_point):
+            chi_squ_1 += ((y_values[i] - yfit_1[i])/std_err_1)**2
+            print(chi_squ_1)
+        print('chi square test:')
+        print(chi_squ_1)
+        print('chi square test:')
+        def power(a):
+            return a**slope_1+intercept_1
+        
+        y_fit_values = list(map(power,x_values[0:breaking_point]))
+        s = chisquare(y_values[0:breaking_point], y_fit_values)
+        print(s)
+        print(y_values[0:breaking_point], y_fit_values)
+        
+        
         print('-----------------------------------\n')
         print('Slope_2, Error_2, Intercept_2, Correlation Coefficient_2:')
         print(slope_2, std_err_2, intercept_2, r_value_2**2)
+        chi_squ_2 = 0
+        for i in df.index[breaking_point-1 : -1]:
+            chi_squ_2 += ((y_values[i] - yfit_2[i])/std_err_2)**2
+        print('chi square test:')
+        print(chi_squ_2)
         print('-----------------------------------')
         
         plt.grid()
