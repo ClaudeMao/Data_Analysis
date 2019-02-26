@@ -25,10 +25,8 @@ def main():
     
         x_name = df.columns[0]
         y_name = df.columns[1]
-        errorbar = df.columns[2]
         x_values = list(df[x_name].values)
         y_values = list(df[y_name].values)
-        y_errorbar = list(df[errorbar].values)
         slope_1, intercept_1, r_value_1, p_value_1, std_err_1 = linregress(x_values[0:breaking_point], y_values[0:breaking_point])
         slope_2, intercept_2, r_value_2, p_value_2, std_err_2 = linregress(x_values[breaking_point:-1], y_values[breaking_point:-1])
         #Fit x and y Data using a linear regression
