@@ -16,12 +16,13 @@ def main():
     filename = input('Please input name of your worksheet(with type): ')
     worksheet = pd.read_excel(filename)
     df = pd.DataFrame(worksheet)
+    
 
     breaking_point = input('Do you need Breaking point?(yes or no):')
     
     if breaking_point == 'yes':
         breaking_point = eval(input('Which one?(e.g.15. This means you wanna split data points into 0-14 and 14 to after):'))
-   
+    
         x_name = df.columns[0]
         y_name = df.columns[1]
         errorbar = df.columns[2]
@@ -151,11 +152,14 @@ def main():
     else:
         print('Invalid input')
         
-   
     
 if __name__ == '__main__':
-    main()
-    
+    try:
+        main()
+    except FileNotFoundError as e:
+        print('No such file found!')
+    except ValueError as e:
+        print('Values input should be less than range of index!')
     
     
     
