@@ -213,14 +213,36 @@ def main():
         plt.errorbar(x_values, y_values, fmt='o',label='Data point_1', xerr = 0, yerr = std_err_1, capsize = 5)
         # we don't want error on x axis
         # to make vertical line longer, we need to set parameter 'capsize' with appropriate value
+        # show the function of the line
         plt.text(x_values[-4], y_values[-4]*0.90, 'y = ' + str(round(slope_1,3)) + 'x + ' + str(round(intercept_1,3)) )
+        
+        # set unit of each axis
         Unit_x = input('Please input unit of X axis(e.g.[m]):')
         Unit_y = input('Please input unit of Y axis(e.g.[m]):')
+        
         print('-----------------------------------\n')
         print('Slope_1, Error_1, Intercept_1, Correlation Coefficient_1:') 
         # r^2 = coefficient of determination
         print(slope_1, std_err_1, intercept_1, r_value_1**2)
         print('-----------------------------------\n')
+        
+        #calculate std_err_on_y of line 1
+        def power_1(a):
+            return a**slope_1 + intercept_1
+        y_fit_values_1 = list(map(power_1,x_values)) #this is a list which only contain several fitted points
+        y_y_fit_one = [y_values[i]-y_fit_values_1[i] for i in range(len(y_fit_values_1))] #Put 'y - y_fit' of line 1 into list
+        summa_one = [i**2 for i in y_y_fit_one]
+        total_one = 0
+        for i in range(len(summa_one)):
+            total_one += summa_one[i]
+        std_err_on_y_1 = math.sqrt(total_one / (len(y_fit_values_1) - 2))
+        
+        
+        #calculate chi-squared of line 1
+        chi_squ_1 = 0
+        for i in range(len(x_values)):
+            chi_squ_1 += ((y_values[i] - y_fit_values_1[i])/std_err_on_y_1)**2
+        print('chi square test: {}'.format(round(chi_squ_1,2)))# two digits
         
         plt.grid()
         plt.xlabel(x_name + Unit_x)
