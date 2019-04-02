@@ -8,7 +8,7 @@ from scipy.stats import chisquare
 #this module could be used for two columns
 #splitting into two linear regression is supported
 #gaussian fit is supported
-
+#all input used should be small letter
 
 def main():
     current_path_of_py = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -114,7 +114,7 @@ def main():
         xfit_2 = np.linspace(x_values[0], x_values[-1], 100)
         cross_zero = input('Do you need intercept to be zero(yes or no):')
         if cross_zero == 'yes':
-            intercept = 0
+            intercept_1 = 0
         else:
             pass
         yfit_1 = slope_1*xfit_1 + intercept_1
@@ -205,7 +205,7 @@ def main():
         xfit_1 = np.linspace(x_values[0], x_values[-1], 100)
         cross_zero = input('Do you need intercept to be zero(yes or no):')
         if cross_zero == 'yes':
-            intercept = 0
+            intercept_1 = 0
         else:
             pass
         yfit_1 = slope_1*xfit_1 + intercept_1
@@ -213,6 +213,7 @@ def main():
         plt.errorbar(x_values, y_values, fmt='o',label='Data point_1', xerr = 0, yerr = std_err_1, capsize = 5)
         # we don't want error on x axis
         # to make vertical line longer, we need to set parameter 'capsize' with appropriate value
+        plt.text(x_values[-4], y_values[-4]*0.90, 'y = ' + str(round(slope_1,3)) + 'x + ' + str(round(intercept_1,3)) )
         Unit_x = input('Please input unit of X axis(e.g.[m]):')
         Unit_y = input('Please input unit of Y axis(e.g.[m]):')
         print('-----------------------------------\n')
