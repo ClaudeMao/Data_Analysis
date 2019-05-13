@@ -20,7 +20,7 @@ def main():
     
     VIP = eval(input('Important! Linear(0) or curve(1):'))
     if VIP == 0:
-        breaking_point = input('Do you need Breaking point?(yes or no):')
+        breaking_point = eval(input('Do you need Breaking point? YES(1) or NO(0):'))
     elif VIP == 1:
         CurveType = eval(input('Important! Gaussian(a) or Polynomial(b):'))
         if CurveType == 'a':
@@ -100,7 +100,7 @@ def main():
             plt.show()
     
     # Below are Linear part!
-    if breaking_point == 'yes':
+    if breaking_point == 1: #where 1 means yes
         breaking_point = eval(input('Which one?(e.g.15. This means you wanna split data points into 0-14 and 14 to after):'))
     
         x_name = df.columns[0]
@@ -112,8 +112,8 @@ def main():
         #Fit x and y Data using a linear regression
         xfit_1 = np.linspace(x_values[0], x_values[-1], 100)
         xfit_2 = np.linspace(x_values[0], x_values[-1], 100)
-        cross_zero = input('Do you need intercept to be zero(yes or no):')
-        if cross_zero == 'yes':
+        cross_zero = eval(input('Do you need intercept to be zero? YES(1) or NO(0):'))
+        if cross_zero == 1:
             intercept_1 = 0
         else:
             pass
@@ -196,15 +196,15 @@ def main():
         plt.legend(loc = 'best')
         plt.show()
         
-    elif breaking_point == 'no':
+    elif breaking_point == 0: #where 0 means no
         x_name = df.columns[0]
         y_name = df.columns[1]
         x_values = list(df[x_name].values)
         y_values = list(df[y_name].values)
         slope_1, intercept_1, r_value_1, p_value_1, std_err_1 = linregress(x_values, y_values)
         xfit_1 = np.linspace(x_values[0], x_values[-1], 100)
-        cross_zero = input('Do you need intercept to be zero(yes or no):')
-        if cross_zero == 'yes':
+        cross_zero = eval(input('Do you need intercept to be zero? YES(1) or NO(0):'))
+        if cross_zero == 1:
             intercept_1 = 0
         else:
             pass
