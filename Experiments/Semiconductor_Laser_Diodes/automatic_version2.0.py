@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os, sys, math
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 from scipy.stats import linregress
 from scipy.stats import chisquare
 
@@ -22,7 +23,7 @@ def main():
     if VIP == 0:
         breaking_point = eval(input('Do you need Breaking point? YES(1) or NO(0):'))
     elif VIP == 1:
-        CurveType = eval(input('Important! Gaussian(a) or Polynomial(b):'))
+        CurveType = input('Important! Gaussian(a) or exponetial(b):')
         if CurveType == 'a':
             def one_gaussian(x,A,B,C): #Note: had better not to use variable parameter
                 return A*np.exp(-(x-B)**2 / (2*C**2))
@@ -98,7 +99,32 @@ def main():
                         Centred at:{}mm\n\
                         Standard Deviation:{}mm'.format(popt[6],popt[7],popt[8]))                   
             plt.show()
+            
+        if CurveType == 'b':
+            def exponetial(x, a, b):
+                return a * np.exp(x/b)
+                
+            x_name = df.columns[0]
+            y_name = df.columns[1]
+            x_values = list(df[x_name].values)
+            y_values = list(df[y_name].values)
+            
+            popt, pcov = curve_fit(exponetial, x_values, y_values)  #maybe sigma is needed
+            xfit = np.linspace(x_values[0], x_values[-1], 5000)
+            yfit = exponetial(xfit, *popt)
+            plt.errorbar(x_values, y_values, fmt = '.', label='Data')
+            plt.plot(xfit, yfit, lw = 2, label='Exponetial fit')
+            plt.legend(loc = 'best')
+            plt.text(x_values[-4], y_values[-4], 'y = ' + str(round(popt[0],2)) + '*exp(x/' + str(round(popt[1],2)) + ')')
+            print('Values of a and b:{} , {}'.format(popt[0],popt[1]))
     
+            # Labels
+            Unit_x = input('Please input unit of X axis(e.g.[m]):')
+            Unit_y = input('Please input unit of Y axis(e.g.[m]):')
+            plt.xlabel(x_name + Unit_x)
+            plt.ylabel(y_name + Unit_y)
+            plt.show()
+            
     # Below are Linear part!
     if breaking_point == 1: #where 1 means yes
         breaking_point = eval(input('Which one?(e.g.15. This means you wanna split data points into 0-14 and 14 to after):'))
