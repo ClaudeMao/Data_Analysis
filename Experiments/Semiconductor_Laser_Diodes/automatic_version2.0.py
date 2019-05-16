@@ -110,14 +110,26 @@ def main():
             y_values = list(df[y_name].values)
             
             popt, pcov = curve_fit(exponetial, x_values, y_values)  #maybe sigma is needed
+            '''
+            #calculate std_err_on_y of curve
+            def exp(a):
+                return popt[0]* np.exp(a/popt[1])
+            y_fit_values = list(map(exp,x_values))
+            y_y_fit = [y_values[i]-y_fit_values[i] for i in range(len(y_fit_values))] #Put 'y - y_fit' of curve into list
+            summa_one = [i**2 for i in y_y_fit]
+            total_one = 0
+            for i in range(len(summa_one)):
+                total_one += summa_one[i]
+            std_err_on_y = math.sqrt(total_one / (len(y_fit_values) - 2))
+            '''
             xfit = np.linspace(x_values[0], x_values[-1], 5000)
             yfit = exponetial(xfit, *popt)
-            plt.errorbar(x_values, y_values, fmt = '.', label='Data')
+            plt.errorbar(x_values, y_values, fmt = '.', label='Data')# , xerr = 0, yerr = std_err_on_y, capsize = 2)
             plt.plot(xfit, yfit, lw = 2, label='Exponetial fit')
             plt.legend(loc = 'best')
-            plt.text(x_values[-4], y_values[-4], 'y = ' + str(round(popt[0],2)) + '*exp(x/' + str(round(popt[1],2)) + ')')
+            # plt.text(x_values[-4], y_values[-4], 'y = ' + str(round(popt[0],2)) + '*exp(x/' + str(round(popt[1],2)) + ')')
             print('Values of a and b:{} , {}'.format(popt[0],popt[1]))
-    
+
             # Labels
             Unit_x = input('Please input unit of X axis(e.g.[m]):')
             Unit_y = input('Please input unit of Y axis(e.g.[m]):')
